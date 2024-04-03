@@ -17,12 +17,32 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import java.util.List;
 
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+
+    private static final List<String> WHITE_LIST_URL = List.of(
+            "/api/v2/**",
+            "/api/v2/auth/**",
+            "/api/v2/Oauth/**",
+            "/v2/api-docs",
+            "/v3/api-docs",
+            "/v3/api-docs/**",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui/**",
+            "/webjars/**",
+            "/swagger-ui.html",
+            "/actuator/**"
+    );
 
     private final UserDetailsServiceImp userDetailsServiceImp;
 
@@ -45,6 +65,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         req->req
+                                .requestMatchers(createWhiteListMatchers()).permitAll()
                                 .requestMatchers("/client/register/**", "/client/login/**", "/admin/register/**", "/admin/login/**").permitAll()
                                 .requestMatchers("/api/**").permitAll()
                                 .requestMatchers("/api/team-matches/**").permitAll()
@@ -76,6 +97,12 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
+    }
+
+    private AntPathRequestMatcher[] createWhiteListMatchers() {
+        return WHITE_LIST_URL.stream()
+                .map(AntPathRequestMatcher::new)
+                .toArray(AntPathRequestMatcher[]::new);
     }
 }
 
