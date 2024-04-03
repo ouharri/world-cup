@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.servers.Server;
 /**
  * Configuration class for OpenAPI documentation settings.
  *
- * @author <a href="mailto:ouharrioutman@gmail.com">ouharri outman</a>
  */
 @OpenAPIDefinition(
         info = @Info(

@@ -1,6 +1,7 @@
 package com.example.satocup.security;
 
 import com.example.satocup.service.impl.UserDetailsServiceImp;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -25,10 +26,28 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private static final List<String> WHITE_LIST_URL = List.of(
             "/api/v2/**",
+            "/swagger-ui/**",
+            "/v2/api-docs",
+            "/configuration/ui",
+            "/swagger-resources/**",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            "/v2/api-docs",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            // -- Swagger UI v3 (OpenAPI)
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
             "/api/v2/auth/**",
             "/api/v2/Oauth/**",
             "/v2/api-docs",
@@ -38,7 +57,6 @@ public class SecurityConfig {
             "/swagger-resources/**",
             "/configuration/ui",
             "/configuration/security",
-            "/swagger-ui/**",
             "/webjars/**",
             "/swagger-ui.html",
             "/actuator/**"
@@ -50,14 +68,6 @@ public class SecurityConfig {
 
     private final CustomLogoutHandler logoutHandler;
 
-    public SecurityConfig(UserDetailsServiceImp userDetailsServiceImp,
-                          JwtAuthenticationFilter jwtAuthenticationFilter,
-                          CustomLogoutHandler logoutHandler) {
-        this.userDetailsServiceImp = userDetailsServiceImp;
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-        this.logoutHandler = logoutHandler;
-    }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -68,6 +78,7 @@ public class SecurityConfig {
                                 .requestMatchers(createWhiteListMatchers()).permitAll()
                                 .requestMatchers("/client/register/**", "/client/login/**", "/admin/register/**", "/admin/login/**").permitAll()
                                 .requestMatchers("/api/**").permitAll()
+                                .requestMatchers("/swagger-ui/**").permitAll()
                                 .requestMatchers("/api/team-matches/**").permitAll()
                                 .anyRequest()
                                 .authenticated()
